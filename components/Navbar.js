@@ -4,16 +4,16 @@ export default function Navbar() {
   return (
     <nav className="bg-white border-b border-gray-100 px-6 py-3 flex items-center justify-between sticky top-0 z-50">
 
-      <Link href="/" className="text-lg font-semibold tracking-widest">
+      <Link href="/" className="text-lg font-semibold tracking-widest text-gray-900">
         OKAZI
       </Link>
 
       <div className="hidden md:flex items-center gap-6 text-sm text-gray-500">
         <Link href="/recherche" className="hover:text-gray-900 transition">
-          Trouver un prestataire
+          Prestataire
         </Link>
         <Link href="/creer-evenement" className="hover:text-gray-900 transition">
-          Créer mon événement
+          Créer mon évenement
         </Link>
         <Link href="/inscription-prestataire" className="hover:text-gray-900 transition">
           Je suis prestataire

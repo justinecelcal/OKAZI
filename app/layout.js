@@ -3,7 +3,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
 export const metadata = {
-  title: 'OKAZI — Organisez. Comparez. Réservez.',
+  title: 'OKAZI — Organisez de A à Z',
   description: 'La plateforme de réservation événementielle de A à Z.',
 }
 

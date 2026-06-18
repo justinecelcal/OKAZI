@@ -1,65 +1,102 @@
-import Image from "next/image";
+import Link from 'next/link'
 
-export default function Home() {
+const TYPES_EVENTS = [
+  { nom: 'Mariage', icon: '💍' },
+  { nom: 'Anniversaire', icon: '🎂' },
+  { nom: 'Baby shower', icon: '🍼' },
+  { nom: 'EVJF / EVG', icon: '🥂' },
+  { nom: 'Baptême', icon: '✨' },
+  { nom: 'Séminaire', icon: '💼' },
+]
+
+const CATEGORIES = [
+  'Traiteur', 'Photographe', 'DJ & Musique', 'Lieu de réception',
+  'Fleuriste', 'Coiffure & Maquillage', 'Pâtisserie', 'Transport',
+  'Vidéaste', 'Animateur', 'Location matériel', 'Autre',
+]
+
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div>
+
+      {/* HERO */}
+      <section className="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
+        <h1 className="text-5xl font-semibold tracking-tight mb-4">
+          Organisez votre événement
+          <span className="block text-gray-400">de A à Z</span>
+        </h1>
+        <p className="text-lg text-gray-500 mb-8 max-w-xl mx-auto">
+          Trouvez, comparez et réservez tous vos prestataires
+          en un seul endroit. Planning automatique inclus.
+        </p>
+        <div className="flex items-center justify-center gap-3">
+          <Link href="/creer-evenement"
+            className="bg-gray-900 text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-gray-700 transition">
+            Créer mon événement →
+          </Link>
+          <Link href="/recherche"
+            className="border border-gray-200 text-gray-600 px-6 py-3 rounded-xl text-sm hover:border-gray-400 transition">
+            Voir les prestataires
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* TYPES D'ÉVÉNEMENTS */}
+      <section className="max-w-5xl mx-auto px-6 py-12">
+        <h2 className="text-xl font-medium mb-6 text-center">
+          Pour quel événement ?
+        </h2>
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+          {TYPES_EVENTS.map(e => (
+            <Link key={e.nom} href={`/creer-evenement?type=${e.nom}`}
+              className="border border-gray-200 rounded-xl p-4 text-center hover:border-gray-400 transition cursor-pointer bg-white">
+              <div className="text-2xl mb-2">{e.icon}</div>
+              <div className="text-xs text-gray-600">{e.nom}</div>
+            </Link>
+          ))}
         </div>
-      </main>
+      </section>
+
+      {/* CATEGORIES */}
+      <section className="bg-white border-y border-gray-100 py-12">
+        <div className="max-w-5xl mx-auto px-6">
+          <h2 className="text-xl font-medium mb-6 text-center">
+            Tous les prestataires dont vous avez besoin
+          </h2>
+          <div className="flex flex-wrap gap-2 justify-center">
+            {CATEGORIES.map(cat => (
+              <Link key={cat} href={`/recherche?categorie=${cat}`}
+                className="text-sm px-4 py-2 rounded-full border border-gray-200 text-gray-600 hover:border-gray-900 hover:text-gray-900 transition bg-white">
+                {cat}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* COMMENT ÇA MARCHE */}
+      <section className="max-w-5xl mx-auto px-6 py-16">
+        <h2 className="text-xl font-medium mb-10 text-center">
+          Comment ça marche ?
+        </h2>
+        <div className="grid md:grid-cols-4 gap-6">
+          {[
+            { n:'1', t:'Décrivez votre événement', d:"Type, date, budget, nombre d'invités" },
+            { n:'2', t:'Comparez les prestataires', d:'Filtrez par gamme, note et disponibilité' },
+            { n:'3', t:'Réservez en un clic', d:'Confirmez et planifiez vos RDV directement' },
+            { n:'4', t:'Suivez tout en temps réel', d:'Planning, budget et rappels automatiques' },
+          ].map(step => (
+            <div key={step.n} className="text-center">
+              <div className="w-10 h-10 rounded-full bg-gray-900 text-white flex items-center justify-center font-medium mx-auto mb-3">
+                {step.n}
+              </div>
+              <p className="font-medium text-sm mb-1">{step.t}</p>
+              <p className="text-xs text-gray-400">{step.d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
     </div>
-  );
+  )
 }
