@@ -35,7 +35,8 @@ export default function HomePage() {
             Créer mon événement →
           </Link>
           <Link href="/recherche"
-            className="border border-gray-200 text-gray-600 px-6 py-3 rounded-xl text-sm hover:border-gray-400 transition">
+            className="border border-gray-200 text-white px-6 py-3 rounded-xl text-sm hover:border-gray-400 transition">
+        
             Voir les prestataires
           </Link>
         </div>
@@ -43,7 +44,7 @@ export default function HomePage() {
 
       {/* TYPES D'ÉVÉNEMENTS */}
       <section className="max-w-5xl mx-auto px-6 py-12">
-        <h2 className="text-xl font-medium mb-6 text-center">
+        <h2 className="text-xl font-medium mb-6 text-center text-gray-900">
           Pour quel événement ?
         </h2>
         <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
@@ -60,7 +61,7 @@ export default function HomePage() {
       {/* CATEGORIES */}
       <section className="bg-white border-y border-gray-100 py-12">
         <div className="max-w-5xl mx-auto px-6">
-          <h2 className="text-xl font-medium mb-6 text-center">
+          <h2 className="text-xl font-medium mb-6 text-center text-gray-900">
             Tous les prestataires dont vous avez besoin
           </h2>
           <div className="flex flex-wrap gap-2 justify-center">

@@ -6,14 +6,15 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
 
         <div>
-          <p className="font-semibold tracking-widest mb-4">OKAZI</p>
+          <p className="font-semibold tracking-widest mb-4 text-gray-900">OKAZI</p>
+        
           <p className="text-sm text-gray-400">
             La plateforme événementielle de A à Z.
           </p>
         </div>
 
         <div>
-          <p className="font-medium text-sm mb-3">Clients</p>
+          <p className="font-medium text-sm mb-3 text-gray-900">Clients</p>
           <div className="flex flex-col gap-2 text-sm text-gray-400">
             <Link href="/creer-evenement">Créer un événement</Link>
             <Link href="/recherche">Trouver un prestataire</Link>
@@ -22,7 +23,7 @@ export default function Footer() {
         </div>
 
         <div>
-          <p className="font-medium text-sm mb-3">Prestataires</p>
+          <p className="font-medium text-sm mb-3 text-gray-900">Prestataires</p>
           <div className="flex flex-col gap-2 text-sm text-gray-400">
             <Link href="/inscription-prestataire">Rejoindre OKAZI</Link>
             <Link href="/tarifs">Nos formules</Link>
@@ -30,7 +31,7 @@ export default function Footer() {
         </div>
 
         <div>
-          <p className="font-medium text-sm mb-3">Légal</p>
+          <p className="font-medium text-sm mb-3 text-gray-900">Légal</p>
           <div className="flex flex-col gap-2 text-sm text-gray-400">
             <Link href="/cgu">CGU</Link>
             <Link href="/confidentialite">Confidentialité</Link>

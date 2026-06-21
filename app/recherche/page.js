@@ -65,7 +65,7 @@ export default function Recherche() {
                 className="border border-gray-200 rounded-xl p-5 hover:border-gray-400 transition bg-white">
                 <div className="flex items-start justify-between mb-2">
                   <div>
-                    <p className="font-medium">{p.nom}</p>
+                    <p className="font-medium text-gray-900">{p.nom}</p>
                     <p className="text-sm text-gray-500">{p.categorie} · {p.ville}</p>
                   </div>
                   {gamme && (
