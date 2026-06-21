@@ -10,10 +10,19 @@ const TYPES_EVENTS = [
 ]
 
 const CATEGORIES = [
-  'Traiteur', 'Photographe', 'DJ & Musique', 'Lieu de réception',
-  'Fleuriste', 'Coiffure & Maquillage', 'Pâtisserie', 'Transport',
-  'Vidéaste', 'Animateur', 'Location matériel', 'Autre',
+  'Lieux & Espaces',
+  'Restauration & Boissons',
+  'Image & Souvenirs',
+  'Ambiance & Divertissement',
+  'Beauté & Mode/Style',
+  'Décoration & personnalisation',
+  'Logistique & Organisation',
+  'Sécurité & Assurance',
+  'Papeterie & Communication',
+  'Technique & Équipement',
+  'Team building & Activités',
 ]
+
 
 export default function HomePage() {
   return (
@@ -35,8 +44,8 @@ export default function HomePage() {
             Créer mon événement →
           </Link>
           <Link href="/recherche"
-            className="border border-gray-200 text-white px-6 py-3 rounded-xl text-sm hover:border-gray-400 transition">
-        
+            className="border border-gray-200 text-gray-600 px-6 py-3 rounded-xl text-sm hover:border-gray-400 transition"
+          >
             Voir les prestataires
           </Link>
         </div>
