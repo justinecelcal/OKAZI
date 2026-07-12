@@ -35,6 +35,8 @@ export default function Recherche() {
   const [filtreGamme, setFiltreGamme] = useState(null)
   const [filtreCategorie, setFiltreCategorie] = useState(null)
   const [recherche, setRecherche] = useState('')
+  const [ville, setVille] = useState('')
+
 
   useEffect(() => {
     chargerPrestataires()
@@ -51,21 +53,24 @@ export default function Recherche() {
     const matchGamme = filtreGamme ? p.gamme === filtreGamme : true
     const matchCat = filtreCategorie ? p.megacategorie === filtreCategorie : true
     const matchRecherche = recherche
-      ? p.nom.toLowerCase().includes(recherche.toLowerCase()) ||
-        p.ville?.toLowerCase().includes(recherche.toLowerCase())
-      : true
-    return matchGamme && matchCat && matchRecherche
+  ? p.nom.toLowerCase().includes(recherche.toLowerCase())
+  : true
+const matchVille = ville
+  ? p.ville?.toLowerCase().includes(ville.toLowerCase()) ||
+    p.zone?.toLowerCase().includes(ville.toLowerCase())
+  : true
+return matchGamme && matchCat && matchRecherche && matchVille
   })
 
   return (
     <div style={{background: GRADIENT, minHeight: '100vh', padding: '1.5rem'}}>
       <div className="max-w-5xl mx-auto">
 
-        {/* BARRE DE RECHERCHE */}
+       {/* BARRE DE RECHERCHE */}
         <div className="flex gap-3 mb-4" style={{background: 'rgba(255,255,255,0.95)', borderRadius: '50px', padding: '8px 16px'}}>
           <input
             type="text"
-            placeholder="Rechercher un prestataire, une ville..."
+            placeholder="Rechercher un prestataire..."
             value={recherche}
             onChange={e => setRecherche(e.target.value)}
             className="flex-1 outline-none text-sm bg-transparent"
@@ -78,6 +83,26 @@ export default function Recherche() {
           </button>
         </div>
 
+        {/* FILTRE VILLE */}
+        <div className="flex gap-3 mb-4" style={{background: 'rgba(255,255,255,0.95)', borderRadius: '50px', padding: '8px 16px'}}>
+          <span style={{color: '#FF6000', fontSize: '16px'}}>📍</span>
+          <input
+            type="text"
+            placeholder="Ville ou région (ex : Paris, Lyon, IDF...)"
+            value={ville}
+            onChange={e => setVille(e.target.value)}
+            className="flex-1 outline-none text-sm bg-transparent"
+            style={{color: '#333'}}
+          />
+          {ville && (
+            <button onClick={() => setVille('')}
+              className="text-xs font-medium"
+              style={{color: '#FF1493'}}>
+              ✕ Effacer
+            </button>
+          )}
+        </div>
+        
         {/* FILTRE CATÉGORIE */}
         <div className="mb-3 p-3 rounded-xl" style={{background: 'rgba(255,255,255,0.15)'}}>
           <p className="text-xs mb-2" style={{color: 'rgba(255,255,255,0.7)', letterSpacing: '0.06em', textTransform: 'uppercase'}}>Catégorie</p>
