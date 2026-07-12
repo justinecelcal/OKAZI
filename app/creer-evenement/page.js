@@ -1,16 +1,19 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 const TYPES = ['Mariage', 'Anniversaire', 'Baby shower', 'EVJF / EVG', 'Baptême', 'Séminaire', 'Autre']
 
 export default function CreerEvenement() {
   const router = useRouter()
-  const [etape, setEtape] = useState(1)
+  const searchParams = useSearchParams()
+  const typeParam = searchParams.get('type')
+
+  const [etape, setEtape] = useState(typeParam ? 2 : 1)
   const [data, setData] = useState({
-    type: '',
+    type: typeParam || '',
     nom: '',
     date_evenement: '',
     lieu: '',
