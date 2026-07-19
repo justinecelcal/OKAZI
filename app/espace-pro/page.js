@@ -5,7 +5,91 @@ import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 
 const GRADIENT = 'linear-gradient(150deg, #FF6000 0%, #FF4500 30%, #FF1493 65%, #C2006B 100%)'
+function FormulaireProfil({ onSuccess }) {
+  const [data, setData] = useState({
+    nom: '', categorie: '', gamme: '', description: '', ville: '', telephone: '',
+    capacite_min: '', capacite_max: '',
+  })
+  const [loading, setLoading] = useState(false)
+  const [succes, setSucces] = useState(false)
 
+  const CATEGORIES = ['Traiteur', 'Photographe', 'Vidéaste', 'DJ & Musique', 'Lieu de réception',
+    'Fleuriste', 'Coiffure & Maquillage', 'Pâtisserie', 'Transport', 'Animateur', 'Autre']
+  const GAMMES = [
+    { id: 'economique', label: 'Économique' },
+    { id: 'milieu', label: 'Milieu de gamme' },
+    { id: 'haut', label: 'Haut de gamme' },
+    { id: 'luxe', label: 'Luxe' },
+  ]
+
+  function update(champ, val) { setData({ ...data, [champ]: val }) }
+
+  async function sauvegarder() {
+    setLoading(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    const { error } = await supabase.from('prestataires').insert([{
+      ...data,
+      email: user.email,
+      zone: data.ville,
+      capacite_min: parseInt(data.capacite_min) || 0,
+      capacite_max: parseInt(data.capacite_max) || 0,
+      note: 0, nb_avis: 0, verifie: false, plan: 'starter',
+    }])
+    if (!error) { setSucces(true); onSuccess() }
+    setLoading(false)
+  }
+
+  if (succes) return <p className="text-white">Profil créé ! Rechargement...</p>
+
+  return (
+    <div className="rounded-2xl p-6 space-y-4" style={{background: 'rgba(255,255,255,0.15)'}}>
+      <input placeholder="Nom de votre entreprise"
+        value={data.nom} onChange={e => update('nom', e.target.value)}
+        className="w-full rounded-xl px-4 py-3 text-sm outline-none bg-white" style={{color: '#333'}} />
+      <select value={data.categorie} onChange={e => update('categorie', e.target.value)}
+        className="w-full rounded-xl px-4 py-3 text-sm outline-none bg-white" style={{color: '#333'}}>
+        <option value="">Choisir une catégorie</option>
+        {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+      </select>
+      <div className="grid grid-cols-2 gap-3">
+        {GAMMES.map(g => (
+          <button key={g.id} onClick={() => update('gamme', g.id)}
+            className="py-3 rounded-xl text-sm font-medium transition"
+            style={{
+              background: data.gamme === g.id ? 'white' : 'rgba(255,255,255,0.2)',
+              color: data.gamme === g.id ? '#FF1493' : 'white'
+            }}>
+            {g.label}
+          </button>
+        ))}
+      </div>
+      <textarea placeholder="Décrivez votre activité..."
+        value={data.description} onChange={e => update('description', e.target.value)}
+        className="w-full rounded-xl px-4 py-3 text-sm outline-none bg-white h-24" style={{color: '#333'}} />
+      <div className="grid grid-cols-2 gap-3">
+        <input placeholder="Ville"
+          value={data.ville} onChange={e => update('ville', e.target.value)}
+          className="w-full rounded-xl px-4 py-3 text-sm outline-none bg-white" style={{color: '#333'}} />
+        <input placeholder="Téléphone"
+          value={data.telephone} onChange={e => update('telephone', e.target.value)}
+          className="w-full rounded-xl px-4 py-3 text-sm outline-none bg-white" style={{color: '#333'}} />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <input type="number" placeholder="Capacité min"
+          value={data.capacite_min} onChange={e => update('capacite_min', e.target.value)}
+          className="w-full rounded-xl px-4 py-3 text-sm outline-none bg-white" style={{color: '#333'}} />
+        <input type="number" placeholder="Capacité max"
+          value={data.capacite_max} onChange={e => update('capacite_max', e.target.value)}
+          className="w-full rounded-xl px-4 py-3 text-sm outline-none bg-white" style={{color: '#333'}} />
+      </div>
+      <button onClick={sauvegarder} disabled={loading || !data.nom || !data.categorie || !data.gamme}
+        className="w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-50"
+        style={{background: 'white', color: '#FF1493'}}>
+        {loading ? 'Sauvegarde...' : 'Créer mon profil prestataire →'}
+      </button>
+    </div>
+  )
+}
 export default function EspacePro() {
   const [onglet, setOnglet] = useState('overview')
   const [presta, setPresta] = useState(null)
@@ -52,14 +136,11 @@ export default function EspacePro() {
   )
 
   if (!presta) return (
-    <div style={{background: GRADIENT, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem'}}>
-      <div className="text-center">
-        <p className="text-white text-lg mb-4">Vous n'avez pas encore de compte prestataire.</p>
-        <Link href="/inscription-prestataire"
-          className="px-6 py-3 rounded-full font-semibold text-sm"
-          style={{background: 'white', color: '#FF1493'}}>
-          Créer mon compte prestataire →
-        </Link>
+    <div style={{background: GRADIENT, minHeight: '100vh', padding: '2rem'}}>
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-2xl font-semibold text-white mb-2">Bienvenue sur votre espace Pro !</h1>
+        <p className="mb-6" style={{color: 'rgba(255,255,255,0.8)'}}>Complétez votre profil prestataire pour apparaître sur OKAZI.</p>
+        <FormulaireProfil onSuccess={chargerDonnees} />
       </div>
     </div>
   )

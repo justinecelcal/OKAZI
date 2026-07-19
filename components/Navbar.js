@@ -62,11 +62,7 @@ export default function Navbar() {
               style={{background: GRADIENT, color: 'white'}}>
               Mon espace
             </Link>
-            <Link href="/espace-pro"
-              className="text-sm px-4 py-2 rounded-full font-semibold"
-              style={{background: 'white', color: '#FF1493', border: '1.5px solid #FF6000'}}>
-              Espace Pro
-            </Link>
+            
             <button onClick={seDeconnecter}
               className="text-sm px-4 py-2 rounded-full font-semibold"
               style={{border: '1.5px solid #FF6000', color: '#FF6000'}}>
@@ -80,11 +76,7 @@ export default function Navbar() {
               style={{background: GRADIENT, color: 'white'}}>
               Connexion
             </Link>
-            <Link href="/espace-pro"
-              className="text-sm px-4 py-2 rounded-full font-semibold"
-              style={{background: 'white', color: '#FF1493', border: '1.5px solid #FF6000'}}>
-              Espace Pro
-            </Link>
+            
           </>
         )}
       </div>
