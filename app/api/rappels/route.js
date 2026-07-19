@@ -1,12 +1,11 @@
 import { supabase } from '@/lib/supabase'
-import { envoyerEmail, envoyerSMS, templateRappelEvenement } from '@/lib/brevo'
+import { envoyerEmail, templateRappelEvenement } from '@/lib/brevo'
 
 export async function GET() {
   try {
-    // Récupérer tous les événements avec une date définie
     const { data: evenements, error } = await supabase
       .from('evenements')
-      .select('*, auth.users!user_id(email)')
+      .select('*')
       .not('date_evenement', 'is', null)
 
     if (error) throw error
@@ -19,12 +18,21 @@ export async function GET() {
       const diffMs = dateEvt - aujourd_hui
       const diffJours = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
 
-      // Envoyer rappel à J-7, J-3, J-1
       if ([7, 3, 1].includes(diffJours)) {
-        const userEmail = evt['auth.users']?.email
+        // Récupérer l'email de l'utilisateur
+        let userEmail = null
+
+        if (evt.user_id) {
+          const { data: userData } = await supabase
+            .from('profiles')
+            .select('email')
+            .eq('id', evt.user_id)
+            .single()
+          userEmail = userData?.email
+        }
+
         if (!userEmail) continue
 
-        // Email de rappel
         await envoyerEmail({
           to: userEmail,
           toName: 'Client OKAZI',
@@ -47,7 +55,8 @@ export async function GET() {
     return Response.json({
       success: true,
       rappels: rappelsEnvoyes.length,
-      details: rappelsEnvoyes
+      details: rappelsEnvoyes,
+      evenements_trouves: evenements?.length || 0
     })
 
   } catch (err) {
