@@ -21,7 +21,6 @@ const CATEGORIES = [
   'Sécurité & Assurance',
 ]
 
-
 const GRADIENT = 'linear-gradient(150deg, #FF6000 0%, #FF4500 30%, #FF1493 65%, #C2006B 100%)'
 
 export default function HomePage() {
@@ -126,7 +125,7 @@ export default function HomePage() {
           <p className="text-sm mb-6" style={{color: 'rgba(255,255,255,0.85)'}}>
             Rejoignez OKAZI et accédez à des milliers de clients qui organisent leurs événements.
           </p>
-          <Link href="/inscription-prestataire"
+          <Link href="/connexion?type=prestataire"
             className="px-6 py-3 rounded-full text-sm font-semibold inline-block"
             style={{background: 'white', color: '#FF1493'}}>
             Rejoindre OKAZI →
