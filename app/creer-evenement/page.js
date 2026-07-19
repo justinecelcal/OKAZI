@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 const TYPES = ['Mariage', 'Anniversaire', 'Baby shower', 'EVJF / EVG', 'Baptême', 'Séminaire', 'Autre']
 
-export default function CreerEvenement() {
+function CreerEvenementContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const typeParam = searchParams.get('type')
@@ -34,7 +34,6 @@ export default function CreerEvenement() {
       nb_invites: parseInt(data.nb_invites) || 0,
       budget: data.budget,
     }])
-
     if (error) {
       alert('Erreur : ' + error.message)
     } else {
@@ -45,7 +44,6 @@ export default function CreerEvenement() {
   return (
     <div className="max-w-2xl mx-auto px-6 py-12">
 
-      {/* BARRE DE PROGRESSION */}
       <div className="flex items-center mb-10">
         {[1, 2, 3, 4].map(n => (
           <div key={n} className="flex items-center flex-1">
@@ -58,7 +56,6 @@ export default function CreerEvenement() {
         ))}
       </div>
 
-      {/* ÉTAPE 1 — TYPE */}
       {etape === 1 && (
         <div>
           <h1 className="text-2xl font-semibold mb-2">Quel type d'événement ?</h1>
@@ -79,12 +76,11 @@ export default function CreerEvenement() {
         </div>
       )}
 
-      {/* ÉTAPE 2 — DÉTAILS */}
       {etape === 2 && (
         <div>
           <h1 className="text-2xl font-semibold mb-6">Les détails</h1>
           <div className="space-y-4 mb-8">
-            <input placeholder="Nom de l'événement (ex : Mariage Sophie & Marc)"
+            <input placeholder="Nom de l'événement"
               value={data.nom} onChange={e => update('nom', e.target.value)}
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm" />
             <input type="date"
@@ -104,7 +100,6 @@ export default function CreerEvenement() {
         </div>
       )}
 
-      {/* ÉTAPE 3 — BUDGET */}
       {etape === 3 && (
         <div>
           <h1 className="text-2xl font-semibold mb-6">Votre budget</h1>
@@ -114,8 +109,7 @@ export default function CreerEvenement() {
               value={data.budget} onChange={e => update('budget', parseInt(e.target.value))}
               className="w-full" />
             <div className="flex justify-between text-xs text-gray-400 mt-2">
-              <span>500 €</span>
-              <span>50 000 €</span>
+              <span>500 €</span><span>50 000 €</span>
             </div>
           </div>
           <div className="flex gap-3">
@@ -125,7 +119,6 @@ export default function CreerEvenement() {
         </div>
       )}
 
-      {/* ÉTAPE 4 — RÉCAPITULATIF */}
       {etape === 4 && (
         <div>
           <h1 className="text-2xl font-semibold mb-6">Récapitulatif</h1>
@@ -147,5 +140,13 @@ export default function CreerEvenement() {
       )}
 
     </div>
+  )
+}
+
+export default function CreerEvenement() {
+  return (
+    <Suspense fallback={<div style={{padding:'2rem'}}>Chargement...</div>}>
+      <CreerEvenementContent />
+    </Suspense>
   )
 }
