@@ -38,10 +38,11 @@ export default function Navbar() {
 
       {/* Navigation centrale */}
       <div className="hidden md:flex items-center gap-6 text-sm">
-        <Link href="/inscription-prestataire"
-          style={{background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
-          Je suis prestataire
-        </Link>
+        <Link href="/connexion?type=prestataire"
+  style={{background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+  Je suis prestataire
+</Link>
+        
         <Link href="/recherche"
           style={{background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
           Trouver un prestataire
@@ -61,6 +62,11 @@ export default function Navbar() {
               style={{background: GRADIENT, color: 'white'}}>
               Mon espace
             </Link>
+            <Link href="/espace-pro"
+              className="text-sm px-4 py-2 rounded-full font-semibold"
+              style={{background: 'white', color: '#FF1493', border: '1.5px solid #FF6000'}}>
+              Espace Pro
+            </Link>
             <button onClick={seDeconnecter}
               className="text-sm px-4 py-2 rounded-full font-semibold"
               style={{border: '1.5px solid #FF6000', color: '#FF6000'}}>
@@ -68,11 +74,18 @@ export default function Navbar() {
             </button>
           </>
         ) : (
-          <Link href="/connexion"
-            className="text-sm px-4 py-2 rounded-full font-semibold"
-            style={{background: GRADIENT, color: 'white'}}>
-            Connexion
-          </Link>
+          <>
+            <Link href="/connexion"
+              className="text-sm px-4 py-2 rounded-full font-semibold"
+              style={{background: GRADIENT, color: 'white'}}>
+              Connexion
+            </Link>
+            <Link href="/espace-pro"
+              className="text-sm px-4 py-2 rounded-full font-semibold"
+              style={{background: 'white', color: '#FF1493', border: '1.5px solid #FF6000'}}>
+              Espace Pro
+            </Link>
+          </>
         )}
       </div>
     </nav>

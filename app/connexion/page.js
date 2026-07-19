@@ -1,15 +1,19 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 
 const GRADIENT = 'linear-gradient(150deg, #FF6000 0%, #FF4500 30%, #FF1493 65%, #C2006B 100%)'
 
-export default function Connexion() {
+function ConnexionContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const typeParam = searchParams.get('type')
+
   const [onglet, setOnglet] = useState('connexion')
+  const [typeUser, setTypeUser] = useState(typeParam || 'particulier')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [nom, setNom] = useState('')
@@ -24,7 +28,7 @@ export default function Connexion() {
     if (error) {
       setErreur('Email ou mot de passe incorrect.')
     } else {
-      router.push('/dashboard')
+      router.push(typeUser === 'prestataire' ? '/espace-pro' : '/dashboard')
     }
     setLoading(false)
   }
@@ -40,7 +44,9 @@ export default function Connexion() {
     if (error) {
       setErreur(error.message)
     } else {
-      setSucces('Compte créé ! Vérifiez votre email pour confirmer.')
+      setSucces(typeUser === 'prestataire'
+        ? 'Compte prestataire créé ! Vérifiez votre email pour confirmer.'
+        : 'Compte créé ! Vérifiez votre email pour confirmer.')
     }
     setLoading(false)
   }
@@ -48,7 +54,9 @@ export default function Connexion() {
   async function continuerAvecGoogle() {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin + '/dashboard' }
+      options: {
+        redirectTo: window.location.origin + (typeUser === 'prestataire' ? '/espace-pro' : '/dashboard')
+      }
     })
   }
 
@@ -64,7 +72,7 @@ export default function Connexion() {
         <p className="text-center text-sm text-gray-400 mb-6">Organisez votre événement de A à Z</p>
 
         {/* ONGLETS */}
-        <div className="flex bg-gray-100 rounded-xl p-1 mb-6">
+        <div className="flex bg-gray-100 rounded-xl p-1 mb-4">
           <button onClick={() => setOnglet('connexion')}
             className="flex-1 py-2 rounded-lg text-sm font-medium transition"
             style={{
@@ -82,6 +90,28 @@ export default function Connexion() {
               boxShadow: onglet === 'inscription' ? '0 2px 8px rgba(0,0,0,0.1)' : 'none'
             }}>
             Inscription
+          </button>
+        </div>
+
+        {/* TYPE D'UTILISATEUR */}
+        <div className="flex gap-2 mb-4">
+          <button onClick={() => setTypeUser('particulier')}
+            className="flex-1 py-2 rounded-xl text-sm font-medium transition"
+            style={{
+              background: typeUser === 'particulier' ? GRADIENT : 'transparent',
+              color: typeUser === 'particulier' ? 'white' : '#FF6000',
+              border: '1.5px solid #FF6000'
+            }}>
+            👤 Particulier
+          </button>
+          <button onClick={() => setTypeUser('prestataire')}
+            className="flex-1 py-2 rounded-xl text-sm font-medium transition"
+            style={{
+              background: typeUser === 'prestataire' ? GRADIENT : 'transparent',
+              color: typeUser === 'prestataire' ? 'white' : '#FF6000',
+              border: '1.5px solid #FF6000'
+            }}>
+            🏢 Prestataire
           </button>
         </div>
 
@@ -130,7 +160,9 @@ export default function Connexion() {
           disabled={loading}
           className="w-full py-3 rounded-xl text-white font-semibold text-sm mb-4 disabled:opacity-50"
           style={{background: GRADIENT}}>
-          {loading ? 'Chargement...' : onglet === 'connexion' ? 'Se connecter →' : 'Créer mon compte →'}
+          {loading ? 'Chargement...' : onglet === 'connexion'
+            ? `Se connecter →`
+            : typeUser === 'prestataire' ? 'Créer mon compte prestataire →' : 'Créer mon compte →'}
         </button>
 
         {/* DIVIDER */}
@@ -161,5 +193,13 @@ export default function Connexion() {
 
       </div>
     </div>
+  )
+}
+
+export default function Connexion() {
+  return (
+    <Suspense fallback={<div style={{background: 'linear-gradient(150deg, #FF6000, #C2006B)', minHeight: '100vh'}}></div>}>
+      <ConnexionContent />
+    </Suspense>
   )
 }
