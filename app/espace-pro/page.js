@@ -534,6 +534,85 @@ function FormulaireProfil({ onSuccess }) {
   )
 }
 
+function CalendrierPro({ reservations }) {
+  const [moisActuel, setMoisActuel] = useState(new Date())
+
+  const mois = moisActuel.getMonth()
+  const annee = moisActuel.getFullYear()
+  const nomsMois = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']
+  const joursLabel = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim']
+
+  const premierJour = new Date(annee, mois, 1).getDay()
+  const decalage = premierJour === 0 ? 6 : premierJour - 1
+  const nbJours = new Date(annee, mois + 1, 0).getDate()
+
+  function getRdvDuJour(jour) {
+    const date = `${annee}-${String(mois+1).padStart(2,'0')}-${String(jour).padStart(2,'0')}`
+    return reservations.filter(r => r.evenements?.date_evenement === date)
+  }
+
+  const aujourd_hui = new Date()
+  const estAujourdhui = (jour) =>
+    jour === aujourd_hui.getDate() &&
+    mois === aujourd_hui.getMonth() &&
+    annee === aujourd_hui.getFullYear()
+
+  return (
+    <div className="rounded-2xl p-4" style={{background: 'rgba(255,255,255,0.15)'}}>
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-white font-semibold">{nomsMois[mois]} {annee}</span>
+        <div className="flex gap-2">
+          <button onClick={() => setMoisActuel(new Date(annee, mois-1, 1))}
+            className="w-7 h-7 rounded-full flex items-center justify-center text-white"
+            style={{background: 'rgba(255,255,255,0.2)'}}>‹</button>
+          <button onClick={() => setMoisActuel(new Date(annee, mois+1, 1))}
+            className="w-7 h-7 rounded-full flex items-center justify-center text-white"
+            style={{background: 'rgba(255,255,255,0.2)'}}>›</button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-7 gap-1 mb-1">
+        {joursLabel.map(j => (
+          <div key={j} className="text-center text-xs py-1" style={{color: 'rgba(255,255,255,0.5)'}}>
+            {j}
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-7 gap-1">
+        {Array(decalage).fill(null).map((_, i) => <div key={`empty-${i}`} />)}
+        {Array(nbJours).fill(null).map((_, i) => {
+          const jour = i + 1
+          const rdvs = getRdvDuJour(jour)
+          const hasRdvOk = rdvs.some(r => r.statut === 'confirme')
+          const hasRdvWait = rdvs.some(r => r.statut === 'en_attente')
+
+          return (
+            <div key={jour} className="min-h-12 rounded-lg p-1 cursor-pointer"
+              style={{
+                background: estAujourdhui(jour) ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.05)',
+                border: estAujourdhui(jour) ? '1.5px solid white' : '1px solid rgba(255,255,255,0.1)'
+              }}>
+              <div className="text-xs text-white font-medium mb-1">{jour}</div>
+              {hasRdvOk && (
+                <div className="text-xs px-1 rounded mb-0.5"
+                  style={{background: 'rgba(0,200,100,0.7)', color: 'white', fontSize: '9px'}}>
+                  ✅ RDV
+                </div>
+              )}
+              {hasRdvWait && (
+                <div className="text-xs px-1 rounded"
+                  style={{background: 'rgba(255,165,0,0.7)', color: 'white', fontSize: '9px'}}>
+                  ⏳ RDV
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
 export default function EspacePro() {
   const [onglet, setOnglet] = useState('overview')
   const [presta, setPresta] = useState(null)
@@ -692,29 +771,88 @@ export default function EspacePro() {
         )}
 
         {onglet === 'rdv' && (
-          <div className="rounded-2xl p-5" style={{background: 'rgba(255,255,255,0.15)'}}>
-            <h2 className="font-medium text-white mb-4">Planning RDV clients</h2>
-            {reservations.length === 0 ? (
-              <p style={{color: 'rgba(255,255,255,0.6)'}}>Aucun rendez-vous.</p>
-            ) : reservations.map(r => (
-              <div key={r.id} className="flex items-center gap-3 p-4 rounded-xl mb-2"
-                style={{background: 'rgba(255,255,255,0.15)'}}>
-                <div className="w-2 h-2 rounded-full flex-shrink-0"
-                  style={{background: r.statut === 'confirme' ? '#00FF96' : '#FFD700'}}></div>
-                <div className="flex-1">
-                  <p className="text-white font-medium text-sm">{r.evenements?.nom}</p>
-                  <p className="text-xs" style={{color: 'rgba(255,255,255,0.7)'}}>
-                    {r.evenements?.type} · {r.evenements?.date_evenement || 'Date à confirmer'}
-                  </p>
-                </div>
-                <span className="text-xs px-2 py-1 rounded-full"
-                  style={{background: r.statut === 'confirme' ? 'rgba(0,255,150,0.3)' : 'rgba(255,200,0,0.3)', color: 'white'}}>
-                  {r.statut === 'confirme' ? 'Confirmé' : 'En attente'}
-                </span>
+  <div>
+    {/* STATS */}
+    <div className="grid grid-cols-3 gap-4 mb-6">
+      {[
+        { val: reservations.filter(r => r.statut === 'confirme').length, lbl: 'RDV confirmés', color: '#00C864' },
+        { val: reservations.filter(r => r.statut === 'en_attente').length, lbl: 'En attente', color: '#FFA500' },
+        { val: reservations.length, lbl: 'Total réservations', color: 'white' },
+      ].map((s, i) => (
+        <div key={i} className="rounded-2xl p-4 text-center" style={{background: 'rgba(255,255,255,0.2)'}}>
+          <p className="text-2xl font-semibold" style={{color: s.color}}>{s.val}</p>
+          <p className="text-xs mt-1" style={{color: 'rgba(255,255,255,0.75)'}}>{s.lbl}</p>
+        </div>
+      ))}
+    </div>
+
+    {/* LÉGENDE */}
+    <div className="flex gap-4 mb-4 flex-wrap">
+      {[
+        { color: 'rgba(255,20,147,0.8)', label: 'Événement client' },
+        { color: 'rgba(255,165,0,0.8)', label: 'RDV en attente' },
+        { color: 'rgba(0,200,100,0.8)', label: 'RDV confirmé' },
+      ].map((l, i) => (
+        <div key={i} className="flex items-center gap-2 text-xs" style={{color: 'rgba(255,255,255,0.8)'}}>
+          <div className="w-3 h-3 rounded" style={{background: l.color}}></div>
+          {l.label}
+        </div>
+      ))}
+    </div>
+
+    {/* CALENDRIER */}
+    <CalendrierPro reservations={reservations} />
+
+    {/* LISTE RDV */}
+    <div className="rounded-2xl p-5 mt-4" style={{background: 'rgba(255,255,255,0.15)'}}>
+      <h2 className="font-medium text-white mb-4">Prochains RDV clients</h2>
+      {reservations.length === 0 ? (
+        <p style={{color: 'rgba(255,255,255,0.6)', fontSize: '13px'}}>Aucun rendez-vous planifié.</p>
+      ) : (
+        <div className="space-y-2">
+          {reservations.map(r => (
+            <div key={r.id} className="flex items-center gap-3 p-3 rounded-xl"
+              style={{
+                background: r.statut === 'confirme' ? 'rgba(0,200,100,0.2)' : 'rgba(255,165,0,0.2)',
+                border: r.statut === 'confirme' ? '1px solid rgba(0,200,100,0.4)' : '1px solid rgba(255,165,0,0.4)'
+              }}>
+              <span className="text-lg">{r.statut === 'confirme' ? '✅' : '⏳'}</span>
+              <div className="flex-1">
+                <p className="text-white font-medium text-sm">{r.evenements?.nom}</p>
+                <p className="text-xs" style={{color: 'rgba(255,255,255,0.7)'}}>
+                  {r.evenements?.type} · {r.evenements?.date_evenement || 'Date à confirmer'} · {r.evenements?.nb_invites || '?'} pers.
+                </p>
               </div>
-            ))}
-          </div>
-        )}
+              {r.statut === 'en_attente' && (
+                <div className="flex gap-2">
+                  <button onClick={() => updateStatut(r.id, 'confirme')}
+                    className="text-xs px-3 py-1.5 rounded-full font-medium"
+                    style={{background: 'rgba(0,255,150,0.4)', color: 'white'}}>
+                    ✓ Accepter
+                  </button>
+                  <button onClick={() => updateStatut(r.id, 'refuse')}
+                    className="text-xs px-3 py-1.5 rounded-full font-medium"
+                    style={{background: 'rgba(255,50,50,0.3)', color: 'white'}}>
+                    ✕
+                  </button>
+                </div>
+              )}
+              {r.statut !== 'en_attente' && (
+                <span className="text-xs px-2 py-1 rounded-full"
+                  style={{
+                    background: r.statut === 'confirme' ? 'rgba(0,255,150,0.3)' : 'rgba(255,50,50,0.3)',
+                    color: 'white'
+                  }}>
+                  {r.statut === 'confirme' ? 'Confirmé ✓' : 'Refusé ✕'}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+)}
 
         {onglet === 'reservations' && (
           <div className="rounded-2xl p-5" style={{background: 'rgba(255,255,255,0.15)'}}>
