@@ -57,7 +57,12 @@ export default function Navbar() {
       <div className="flex items-center gap-3">
         {user ? (
           <>
-            <Link href="/dashboard"
+            <Link href="/messagerie"
+  className="text-sm px-4 py-2 rounded-full font-semibold"
+  style={{background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)'}}>
+  💬
+</Link>
+<Link href="/dashboard"
               className="text-sm px-4 py-2 rounded-full font-semibold"
               style={{background: GRADIENT, color: 'white'}}>
               Mon espace
