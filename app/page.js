@@ -23,6 +23,29 @@ const CATEGORIES = [
 
 const GRADIENT = 'linear-gradient(150deg, #FF6000 0%, #FF4500 30%, #FF1493 65%, #C2006B 100%)'
 
+const PRESTATAIRES_SPONSORISES = [
+  { initiales: 'ML', nom: 'Maison Lumière', cat: 'Traiteur · Paris', prix: 'Dès 35€/pers.', gradient: GRADIENT },
+  { initiales: 'SL', nom: 'Studio Luminos', cat: 'Photographe · IDF', prix: 'Dès 800€', gradient: 'linear-gradient(135deg,#7c3aed,#db2777)' },
+  { initiales: 'BS', nom: 'Beat Studio', cat: 'DJ · Paris', prix: 'Dès 500€', gradient: 'linear-gradient(135deg,#0ea5e9,#6366f1)' },
+  { initiales: 'CL', nom: 'Château des Lys', cat: 'Lieu · IDF', prix: 'Dès 2 500€', gradient: 'linear-gradient(135deg,#f59e0b,#ef4444)' },
+]
+
+const PARTENAIRES = [
+  { icon: '💐', nom: 'Interflora', promo: '-15% avec OKAZI' },
+  { icon: '👗', nom: 'Pronovias', promo: 'Collection 2025' },
+  { icon: '🎂', nom: 'Lenôtre', promo: 'Pièces montées' },
+  { icon: '🚗', nom: 'Sixt Events', promo: 'Véhicules luxe' },
+]
+
+const GLASS = {
+  background: 'rgba(255,255,255,0.15)',
+  backdropFilter: 'blur(20px)',
+  WebkitBackdropFilter: 'blur(20px)',
+  border: '1px solid rgba(255,255,255,0.3)',
+  borderRadius: '16px',
+  padding: '1rem',
+}
+
 export default function HomePage() {
   return (
     <div style={{background: GRADIENT, minHeight: '100vh'}}>
@@ -93,6 +116,41 @@ export default function HomePage() {
       {/* SÉPARATEUR */}
       <div style={{height: '0.5px', background: 'rgba(255,255,255,0.2)', margin: '0 1.5rem'}}></div>
 
+      {/* BANNIÈRE 1 — PRESTATAIRES SPONSORISÉS */}
+      <section className="max-w-5xl mx-auto px-6 py-12">
+        <div style={GLASS}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-white">⭐ Prestataires mis en avant</h2>
+            <span className="text-xs px-2 py-1 rounded-full text-white"
+              style={{background: 'rgba(255,255,255,0.25)', border: '1px solid rgba(255,255,255,0.4)'}}>
+              Sponsorisé
+            </span>
+          </div>
+          <div className="grid grid-cols-4 gap-3">
+            {PRESTATAIRES_SPONSORISES.map((p, i) => (
+              <Link key={i} href="/recherche"
+                className="block rounded-xl p-3 text-center relative"
+                style={{background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)'}}>
+                <span className="absolute -top-2 left-2 text-white rounded-full px-2 py-0.5"
+                  style={{background: 'rgba(255,255,255,0.3)', fontSize: '8px', border: '1px solid rgba(255,255,255,0.4)'}}>
+                  Sponsorisé
+                </span>
+                <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white mx-auto mb-2"
+                  style={{background: p.gradient}}>
+                  {p.initiales}
+                </div>
+                <p className="font-semibold text-xs text-white">{p.nom}</p>
+                <p className="text-xs" style={{color: 'rgba(255,255,255,0.7)'}}>{p.cat}</p>
+                <p className="text-xs font-medium mt-1 text-white">{p.prix}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SÉPARATEUR */}
+      <div style={{height: '0.5px', background: 'rgba(255,255,255,0.2)', margin: '0 1.5rem'}}></div>
+
       {/* COMMENT ÇA MARCHE */}
       <section className="max-w-5xl mx-auto px-6 py-16">
         <h2 className="text-xl font-medium mb-10 text-center text-white">
@@ -117,8 +175,34 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* SÉPARATEUR */}
+      <div style={{height: '0.5px', background: 'rgba(255,255,255,0.2)', margin: '0 1.5rem'}}></div>
+
+      {/* BANNIÈRE 2 — PARTENAIRES */}
+      <section className="max-w-5xl mx-auto px-6 py-12">
+        <div style={GLASS}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-white">🤝 Partenaires événementiels</h2>
+            <span className="text-xs" style={{color: 'rgba(255,255,255,0.5)'}}>Publicité</span>
+          </div>
+          <div className="grid grid-cols-4 gap-3">
+            {PARTENAIRES.map((p, i) => (
+              <div key={i} className="rounded-xl p-4 text-center cursor-pointer"
+                style={{background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)'}}>
+                <div className="text-2xl mb-2">{p.icon}</div>
+                <p className="text-xs font-medium text-white">{p.nom}</p>
+                <p className="text-xs mt-1" style={{color: 'rgba(255,255,255,0.8)'}}>{p.promo}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SÉPARATEUR */}
+      <div style={{height: '0.5px', background: 'rgba(255,255,255,0.2)', margin: '0 1.5rem'}}></div>
+
       {/* CTA PRESTATAIRE */}
-      <section className="max-w-2xl mx-auto px-6 pb-16">
+      <section className="max-w-2xl mx-auto px-6 py-16">
         <div className="rounded-2xl p-8 text-center"
           style={{background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)'}}>
           <h2 className="text-xl font-medium mb-3 text-white">Vous êtes prestataire ?</h2>
@@ -130,6 +214,23 @@ export default function HomePage() {
             style={{background: 'white', color: '#FF1493'}}>
             Rejoindre OKAZI →
           </Link>
+        </div>
+      </section>
+
+      {/* BANNIÈRE 3 — GOOGLE ADSENSE */}
+      <section className="max-w-5xl mx-auto px-6 pb-16">
+        <div className="rounded-2xl p-4 text-center"
+          style={{background: 'rgba(255,255,255,0.1)', border: '1px dashed rgba(255,255,255,0.3)'}}>
+          <p className="text-xs mb-2"
+            style={{color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.06em'}}>
+            Publicité
+          </p>
+          <div className="rounded-xl flex items-center justify-center py-6"
+            style={{background: 'rgba(255,255,255,0.08)'}}>
+            <p className="text-sm" style={{color: 'rgba(255,255,255,0.4)'}}>
+              📢 Espace Google AdSense — 728×90px
+            </p>
+          </div>
         </div>
       </section>
 
