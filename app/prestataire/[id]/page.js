@@ -253,6 +253,22 @@ export default function FichePrestataire() {
             </button>
           </div>
         </div>
+        {/* GOOGLE ADSENSE */}
+<div className="mt-4">
+  <div className="rounded-2xl p-4 text-center"
+    style={{background: 'rgba(255,255,255,0.1)', border: '1px dashed rgba(255,255,255,0.3)'}}>
+    <p className="text-xs mb-2"
+      style={{color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.06em'}}>
+      Publicité
+    </p>
+    <div className="rounded-xl flex items-center justify-center py-6"
+      style={{background: 'rgba(255,255,255,0.08)'}}>
+      <p className="text-sm" style={{color: 'rgba(255,255,255,0.4)'}}>
+        📢 Espace Google AdSense — 728×90px
+      </p>
+    </div>
+  </div>
+</div>
 
         {/* MODAL RÉSERVATION */}
         {modalOuvert && (
