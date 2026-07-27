@@ -68,12 +68,12 @@ const modePro = searchParams.get('mode') === 'pro'
     <div style={{background: GRADIENT, minHeight: '100vh', padding: '1.5rem'}}>
       <div className="max-w-4xl mx-auto">
 
-        <Link href="/recherche" className="text-sm mb-6 inline-block"
+        <Link href={modePro ? '/espace-pro' : '/recherche'} className="text-sm mb-6 inline-block"
           style={{color: 'rgba(255,255,255,0.8)'}}>
           ← Retour aux résultats
         </Link>
 
-        {reservationFaite && (
+        {!modePro && reservationFaite && (
           <div className="rounded-xl p-4 mb-6 flex items-center justify-between"
             style={{background: 'rgba(0,255,150,0.2)', border: '1px solid rgba(0,255,150,0.4)'}}>
             <span className="text-white text-sm">✓ Demande de réservation envoyée à {presta.nom} !</span>
@@ -121,12 +121,25 @@ const modePro = searchParams.get('mode') === 'pro'
             </div>
             <button onClick={() => setModalOuvert(true)}
               className="text-white px-6 py-3 rounded-full text-sm font-semibold"
-              style={{background: GRADIENT}}>
+             style={{background: GRADIENT, display: modePro ? 'none' : 'block'}}>
               Réserver →
             </button>
           </div>
 
-          {/* DESCRIPTION */}
+          
+         {/* PHOTOS */}
+{(presta.photo_1 || presta.photo_2 || presta.photo_3) && (
+  <div className="mb-4">
+    <div className="grid grid-cols-3 gap-3">
+      {[presta.photo_1, presta.photo_2, presta.photo_3].filter(Boolean).map((photo, i) => (
+        <div key={i} className="aspect-square rounded-xl overflow-hidden">
+          <img src={photo} alt={`photo ${i+1}`} className="w-full h-full object-cover" />
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+{/* DESCRIPTION */}
           <p className="text-sm text-gray-600 leading-relaxed mb-4">{presta.description}</p>
 
           {/* INFOS */}
@@ -274,15 +287,14 @@ const modePro = searchParams.get('mode') === 'pro'
     </div>
   </div>
 </div>
-
-        {/* MODAL RÉSERVATION */}
-        {modalOuvert && (
-          <div className="fixed inset-0 flex items-center justify-center p-6 z-50"
-            style={{background: 'rgba(0,0,0,0.5)'}}>
-            <div className="bg-white rounded-2xl p-6 max-w-md w-full">
-              <h2 className="font-semibold text-lg mb-4" style={{color: '#1a1a1a'}}>
-                Réserver {presta.nom}
-              </h2>
+{/* MODAL RÉSERVATION */}
+{!modePro && modalOuvert && (
+  <div className="fixed inset-0 flex items-center justify-center p-6 z-50"
+    style={{background: 'rgba(0,0,0,0.5)'}}>
+    <div className="bg-white rounded-2xl p-6 max-w-md w-full">
+      <h2 className="font-semibold text-lg mb-4" style={{color: '#1a1a1a'}}>
+        Réserver {presta.nom}
+      </h2>
 
               {evenements.length === 0 ? (
                 <div>
