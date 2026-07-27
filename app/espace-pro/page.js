@@ -518,6 +518,7 @@ function FormulaireProfil({ onSuccess }) {
 
 function CalendrierPro({ reservations }) {
   const [moisActuel, setMoisActuel] = useState(new Date())
+  const [jourSelectionne, setJourSelectionne] = useState(null)
 
   const mois = moisActuel.getMonth()
   const annee = moisActuel.getFullYear()
@@ -530,7 +531,9 @@ function CalendrierPro({ reservations }) {
 
   function getRdvDuJour(jour) {
     const date = `${annee}-${String(mois+1).padStart(2,'0')}-${String(jour).padStart(2,'0')}`
-    return reservations.filter(r => r.evenements?.date_evenement === date)
+    return reservations.filter(r => 
+      r.date_rdv === date || r.evenements?.date_evenement === date
+    )
   }
 
   const aujourd_hui = new Date()
@@ -539,59 +542,113 @@ function CalendrierPro({ reservations }) {
     mois === aujourd_hui.getMonth() &&
     annee === aujourd_hui.getFullYear()
 
+  const rdvJourSelectionne = jourSelectionne ? getRdvDuJour(jourSelectionne) : []
+
   return (
-    <div className="rounded-2xl p-4" style={{background: 'rgba(255,255,255,0.15)'}}>
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-white font-semibold">{nomsMois[mois]} {annee}</span>
-        <div className="flex gap-2">
-          <button onClick={() => setMoisActuel(new Date(annee, mois-1, 1))}
-            className="w-7 h-7 rounded-full flex items-center justify-center text-white"
-            style={{background: 'rgba(255,255,255,0.2)'}}>‹</button>
-          <button onClick={() => setMoisActuel(new Date(annee, mois+1, 1))}
-            className="w-7 h-7 rounded-full flex items-center justify-center text-white"
-            style={{background: 'rgba(255,255,255,0.2)'}}>›</button>
+    <div>
+      <div className="rounded-2xl p-4 mb-3" style={{background: 'rgba(255,255,255,0.15)'}}>
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-white font-semibold">{nomsMois[mois]} {annee}</span>
+          <div className="flex gap-2">
+            <button onClick={() => setMoisActuel(new Date(annee, mois-1, 1))}
+              className="w-7 h-7 rounded-full flex items-center justify-center text-white"
+              style={{background: 'rgba(255,255,255,0.2)'}}>‹</button>
+            <button onClick={() => setMoisActuel(new Date(annee, mois+1, 1))}
+              className="w-7 h-7 rounded-full flex items-center justify-center text-white"
+              style={{background: 'rgba(255,255,255,0.2)'}}>›</button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-7 gap-1 mb-1">
+          {joursLabel.map(j => (
+            <div key={j} className="text-center text-xs py-1" style={{color: 'rgba(255,255,255,0.5)'}}>
+              {j}
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-7 gap-1">
+          {Array(decalage).fill(null).map((_, i) => <div key={`empty-${i}`} />)}
+          {Array(nbJours).fill(null).map((_, i) => {
+            const jour = i + 1
+            const rdvs = getRdvDuJour(jour)
+            const hasRdvOk = rdvs.some(r => r.statut === 'confirme')
+            const hasRdvWait = rdvs.some(r => r.statut === 'en_attente')
+            const isSelected = jourSelectionne === jour
+
+            return (
+              <div key={jour}
+                onClick={() => setJourSelectionne(isSelected ? null : jour)}
+                className="rounded-lg p-1 cursor-pointer"
+                style={{
+                  minHeight: '48px',
+                  background: isSelected ? 'rgba(255,255,255,0.4)' : estAujourdhui(jour) ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.05)',
+                  border: isSelected ? '2px solid white' : estAujourdhui(jour) ? '1.5px solid white' : '1px solid rgba(255,255,255,0.1)'
+                }}>
+                <div className="text-xs text-white font-medium mb-1">{jour}</div>
+                {rdvs.map((r, idx) => (
+                  <div key={idx} className="text-xs px-1 rounded mb-0.5 truncate"
+                    style={{
+                      background: r.statut === 'confirme' ? 'rgba(0,200,100,0.7)' : 'rgba(255,165,0,0.7)',
+                      color: 'white',
+                      fontSize: '8px'
+                    }}>
+                    {r.heure_rdv || r.evenements?.heure_debut || ''} {r.evenements?.nom?.substring(0,8)}...
+                  </div>
+                ))}
+              </div>
+            )
+          })}
+        </div>
+
+        {/* LÉGENDE */}
+        <div className="flex gap-4 mt-3">
+          {[
+            { color: 'rgba(0,200,100,0.7)', label: 'Confirmé' },
+            { color: 'rgba(255,165,0,0.7)', label: 'En attente' },
+          ].map((l, i) => (
+            <div key={i} className="flex items-center gap-1 text-xs" style={{color: 'rgba(255,255,255,0.7)'}}>
+              <div className="w-3 h-3 rounded" style={{background: l.color}}></div>
+              {l.label}
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 mb-1">
-        {joursLabel.map(j => (
-          <div key={j} className="text-center text-xs py-1" style={{color: 'rgba(255,255,255,0.5)'}}>
-            {j}
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-7 gap-1">
-        {Array(decalage).fill(null).map((_, i) => <div key={`empty-${i}`} />)}
-        {Array(nbJours).fill(null).map((_, i) => {
-          const jour = i + 1
-          const rdvs = getRdvDuJour(jour)
-          const hasRdvOk = rdvs.some(r => r.statut === 'confirme')
-          const hasRdvWait = rdvs.some(r => r.statut === 'en_attente')
-
-          return (
-            <div key={jour} className="min-h-12 rounded-lg p-1 cursor-pointer"
-              style={{
-                background: estAujourdhui(jour) ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.05)',
-                border: estAujourdhui(jour) ? '1.5px solid white' : '1px solid rgba(255,255,255,0.1)'
-              }}>
-              <div className="text-xs text-white font-medium mb-1">{jour}</div>
-              {hasRdvOk && (
-                <div className="text-xs px-1 rounded mb-0.5"
-                  style={{background: 'rgba(0,200,100,0.7)', color: 'white', fontSize: '9px'}}>
-                  ✅ RDV
+      {/* DÉTAIL DU JOUR SÉLECTIONNÉ */}
+      {jourSelectionne && (
+        <div className="rounded-2xl p-4" style={{background: 'rgba(255,255,255,0.15)'}}>
+          <h3 className="text-white font-medium text-sm mb-3">
+            📌 {jourSelectionne} {nomsMois[mois]} {annee}
+          </h3>
+          {rdvJourSelectionne.length === 0 ? (
+            <p className="text-xs" style={{color: 'rgba(255,255,255,0.6)'}}>Aucun RDV ce jour.</p>
+          ) : (
+            rdvJourSelectionne.map((r, i) => (
+              <div key={i} className="flex items-center gap-3 p-3 rounded-xl mb-2"
+                style={{
+                  background: r.statut === 'confirme' ? 'rgba(0,200,100,0.2)' : 'rgba(255,165,0,0.2)',
+                  border: r.statut === 'confirme' ? '1px solid rgba(0,200,100,0.4)' : '1px solid rgba(255,165,0,0.4)'
+                }}>
+                <span className="text-lg">{r.statut === 'confirme' ? '✅' : '⏳'}</span>
+                <div className="flex-1">
+                  <p className="text-white text-sm font-medium">{r.evenements?.nom}</p>
+                  <p className="text-xs" style={{color: 'rgba(255,255,255,0.7)'}}>
+                    {r.evenements?.type} · {r.heure_rdv || r.evenements?.heure_debut || 'Heure non définie'} · {r.evenements?.nb_invites || '?'} pers.
+                  </p>
                 </div>
-              )}
-              {hasRdvWait && (
-                <div className="text-xs px-1 rounded"
-                  style={{background: 'rgba(255,165,0,0.7)', color: 'white', fontSize: '9px'}}>
-                  ⏳ RDV
-                </div>
-              )}
-            </div>
-          )
-        })}
-      </div>
+                <span className="text-xs px-2 py-1 rounded-full"
+                  style={{
+                    background: r.statut === 'confirme' ? 'rgba(0,200,100,0.4)' : 'rgba(255,165,0,0.4)',
+                    color: 'white'
+                  }}>
+                  {r.statut === 'confirme' ? 'Confirmé ✓' : 'En attente'}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   )
 }
