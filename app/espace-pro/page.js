@@ -495,24 +495,6 @@ function FormulaireProfil({ onSuccess }) {
                 </div>
               ))}
             </div>
-
-            {/* INDICATEURS RASSURANTS */}
-            <div className="rounded-xl p-4" style={{background: 'rgba(255,255,255,0.1)'}}>
-              <p className="text-white text-xs font-semibold mb-3">🔒 Protections OKAZI pour vos clients</p>
-              {[
-                { icon: '✅', text: 'Tous les prestataires sont vérifiés par notre équipe' },
-                { icon: '🛡️', text: 'Paiements sécurisés — l\'argent est retenu jusqu\'à confirmation' },
-                { icon: '⭐', text: 'Avis vérifiés uniquement après une vraie réservation' },
-                { icon: '💬', text: 'Toute communication est tracée via OKAZI' },
-                { icon: '🔄', text: 'Garantie remboursement si no-show du prestataire' },
-                { icon: '🚨', text: 'Signalement facile des comportements frauduleux' },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-2 mb-2">
-                  <span className="text-sm">{item.icon}</span>
-                  <p className="text-xs" style={{color: 'rgba(255,255,255,0.8)'}}>{item.text}</p>
-                </div>
-              ))}
-            </div>
           </Card>
 
           <div className="flex gap-3">
@@ -701,7 +683,7 @@ export default function EspacePro() {
               {presta.categorie} · {presta.ville}
             </p>
           </div>
-          <Link href={`/prestataire/${presta.id}`}
+          <Link href={`/prestataire/${presta.id}?mode=pro`}
             className="text-sm px-4 py-2 rounded-full font-semibold"
             style={{background: 'white', color: '#FF1493'}}>
             Voir ma fiche →

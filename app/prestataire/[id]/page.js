@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 
@@ -16,6 +16,8 @@ const GAMME_LABELS = {
 
 export default function FichePrestataire() {
   const { id } = useParams()
+  const searchParams = useSearchParams()
+const modePro = searchParams.get('mode') === 'pro'
   const router = useRouter()
   const [presta, setPresta] = useState(null)
   const [evenements, setEvenements] = useState([])
@@ -206,53 +208,56 @@ export default function FichePrestataire() {
           )}
         </div>
 
-        {/* INDICATEURS RASSURANTS */}
-        <div className="bg-white rounded-2xl p-6 mb-4">
-          <h2 className="font-semibold mb-4" style={{color: '#1a1a1a'}}>🔒 Réservez en toute sécurité</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { icon: '🛡️', title: 'Paiement sécurisé', desc: 'Votre argent est retenu jusqu\'à la confirmation de la prestation' },
-              { icon: '✅', title: presta.verifie ? 'Identité vérifiée' : 'Identité contrôlée', desc: presta.verifie ? 'Documents professionnels vérifiés par notre équipe' : 'Pièce d\'identité vérifiée par OKAZI' },
-              { icon: '🔄', title: 'Remboursement garanti', desc: 'Remboursement intégral si le prestataire ne se présente pas' },
-              { icon: '⭐', title: 'Avis vérifiés', desc: 'Tous les avis proviennent de vraies réservations' },
-              { icon: '💬', title: 'Communication tracée', desc: 'Tous vos échanges sont conservés pour votre protection' },
-              { icon: '🚨', title: 'Signalement facile', desc: 'Signalez tout problème à notre équipe sous 72h' },
-            ].map((item, i) => (
-              <div key={i} className="flex items-start gap-3 p-3 rounded-xl"
-                style={{background: '#f9fafb'}}>
-                <span className="text-xl flex-shrink-0">{item.icon}</span>
-                <div>
-                  <p className="text-sm font-medium" style={{color: '#1a1a1a'}}>{item.title}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* AVERTISSEMENT MEMBRE OKAZI */}
-          {!presta.verifie && (
-            <div className="mt-4 rounded-xl p-4"
-              style={{background: '#fefce8', border: '1px solid #fde047'}}>
-              <p className="text-sm font-medium mb-1" style={{color: '#854d0e'}}>
-                👤 Ce prestataire est Membre OKAZI (non professionnel)
-              </p>
-              <p className="text-xs" style={{color: '#92400e'}}>
-                Ce prestataire exerce à titre non professionnel. Son identité a été vérifiée par OKAZI mais il ne dispose pas nécessairement d'une assurance professionnelle. Pour les événements importants, nous vous recommandons de privilégier les prestataires ✅ Certifiés OKAZI.
-              </p>
+        {!modePro && (
+  <>
+    {/* INDICATEURS RASSURANTS */}
+    <div className="bg-white rounded-2xl p-6 mb-4">
+      <h2 className="font-semibold mb-4" style={{color: '#1a1a1a'}}>🔒 Réservez en toute sécurité</h2>
+      <div className="grid grid-cols-2 gap-3">
+        {[
+          { icon: '🛡️', title: 'Paiement sécurisé', desc: 'Votre argent est retenu jusqu\'à la confirmation de la prestation' },
+          { icon: '✅', title: presta.verifie ? 'Identité vérifiée' : 'Identité contrôlée', desc: presta.verifie ? 'Documents professionnels vérifiés par notre équipe' : 'Pièce d\'identité vérifiée par OKAZI' },
+          { icon: '🔄', title: 'Remboursement garanti', desc: 'Remboursement intégral si le prestataire ne se présente pas' },
+          { icon: '⭐', title: 'Avis vérifiés', desc: 'Tous les avis proviennent de vraies réservations' },
+          { icon: '💬', title: 'Communication tracée', desc: 'Tous vos échanges sont conservés pour votre protection' },
+          { icon: '🚨', title: 'Signalement facile', desc: 'Signalez tout problème à notre équipe sous 72h' },
+        ].map((item, i) => (
+          <div key={i} className="flex items-start gap-3 p-3 rounded-xl"
+            style={{background: '#f9fafb'}}>
+            <span className="text-xl flex-shrink-0">{item.icon}</span>
+            <div>
+              <p className="text-sm font-medium" style={{color: '#1a1a1a'}}>{item.title}</p>
+              <p className="text-xs text-gray-500 mt-0.5">{item.desc}</p>
             </div>
-          )}
-        </div>
-
-        {/* SIGNALEMENT */}
-        <div className="bg-white rounded-2xl p-4 mb-4">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-500">Un problème avec ce profil ?</p>
-            <button className="text-xs px-3 py-1.5 rounded-full"
-              style={{background: '#fee2e2', color: '#991b1b'}}>
-              🚨 Signaler ce prestataire
-            </button>
           </div>
+        ))}
+      </div>
+
+      {!presta.verifie && (
+        <div className="mt-4 rounded-xl p-4"
+          style={{background: '#fefce8', border: '1px solid #fde047'}}>
+          <p className="text-sm font-medium mb-1" style={{color: '#854d0e'}}>
+            👤 Ce prestataire est Membre OKAZI (non professionnel)
+          </p>
+          <p className="text-xs" style={{color: '#92400e'}}>
+            Ce prestataire exerce à titre non professionnel. Son identité a été vérifiée par OKAZI mais il ne dispose pas nécessairement d'une assurance professionnelle. Pour les événements importants, nous vous recommandons de privilégier les prestataires ✅ Certifiés OKAZI.
+          </p>
         </div>
+      )}
+    </div>
+
+    {/* SIGNALEMENT */}
+    <div className="bg-white rounded-2xl p-4 mb-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-500">Un problème avec ce profil ?</p>
+        <button className="text-xs px-3 py-1.5 rounded-full"
+          style={{background: '#fee2e2', color: '#991b1b'}}>
+          🚨 Signaler ce prestataire
+        </button>
+      </div>
+    </div>
+  </>
+)}
         {/* GOOGLE ADSENSE */}
 <div className="mt-4">
   <div className="rounded-2xl p-4 text-center"
