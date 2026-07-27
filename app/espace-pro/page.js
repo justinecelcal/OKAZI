@@ -706,53 +706,197 @@ export default function EspacePro() {
           ))}
         </div>
 
-        {onglet === 'overview' && (
-          <div>
-            <div className="grid grid-cols-4 gap-4 mb-6">
-              {[
-                { val: reservations.length, lbl: 'Réservations totales' },
-                { val: nbConfirmes, lbl: 'Confirmées' },
-                { val: nbEnAttente, lbl: 'En attente' },
-                { val: presta.note || 0, lbl: `Note (${presta.nb_avis || 0} avis)` },
-              ].map((k, i) => (
-                <div key={i} className="rounded-2xl p-4 text-center" style={{background: 'rgba(255,255,255,0.2)'}}>
-                  <p className="text-2xl font-semibold text-white">{k.val}</p>
-                  <p className="text-xs mt-1" style={{color: 'rgba(255,255,255,0.75)'}}>{k.lbl}</p>
-                </div>
-              ))}
-            </div>
+       {onglet === 'overview' && (
+  <div>
+    {/* STATS GLOBALES */}
+    <div className="grid grid-cols-4 gap-4 mb-4">
+      {[
+        { val: reservations.length, lbl: 'Réservations totales', color: 'white' },
+        { val: nbConfirmes, lbl: 'Confirmées', color: '#00C864' },
+        { val: nbEnAttente, lbl: 'En attente', color: '#FFA500' },
+        { val: `${presta.note || 0} ⭐`, lbl: `Note (${presta.nb_avis || 0} avis)`, color: 'white' },
+      ].map((k, i) => (
+        <div key={i} className="rounded-2xl p-4 text-center" style={{background: 'rgba(255,255,255,0.2)'}}>
+          <p className="text-2xl font-semibold" style={{color: k.color}}>{k.val}</p>
+          <p className="text-xs mt-1" style={{color: 'rgba(255,255,255,0.75)'}}>{k.lbl}</p>
+        </div>
+      ))}
+    </div>
 
-            <div className="rounded-2xl p-5 mb-4" style={{background: 'rgba(255,255,255,0.15)'}}>
-              <h2 className="font-medium text-white mb-4">
-                Nouvelles demandes
-                {nbEnAttente > 0 && <span className="ml-2 text-xs bg-yellow-400 text-black rounded-full px-2 py-0.5">{nbEnAttente}</span>}
-              </h2>
-              {reservations.filter(r => r.statut === 'en_attente').length === 0 ? (
-                <p style={{color: 'rgba(255,255,255,0.6)', fontSize: '13px'}}>Aucune nouvelle demande.</p>
+    <div className="grid grid-cols-2 gap-4 mb-4">
+
+      {/* NOUVELLES DEMANDES */}
+      <div className="rounded-2xl p-5" style={{background: 'rgba(255,255,255,0.15)'}}>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-medium text-white text-sm">🔔 Nouvelles demandes</h2>
+          {nbEnAttente > 0 && (
+            <span className="text-xs px-2 py-0.5 rounded-full"
+              style={{background: 'rgba(255,200,0,0.4)', color: 'white'}}>
+              {nbEnAttente} en attente
+            </span>
+          )}
+        </div>
+        {reservations.filter(r => r.statut === 'en_attente').length === 0 ? (
+          <p style={{color: 'rgba(255,255,255,0.6)', fontSize: '12px'}}>Aucune nouvelle demande.</p>
+        ) : (
+          reservations.filter(r => r.statut === 'en_attente').map(r => (
+            <div key={r.id} className="flex items-center gap-2 p-2 rounded-xl mb-2"
+              style={{background: 'rgba(255,255,255,0.1)'}}>
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                style={{background: 'rgba(255,255,255,0.3)'}}>
+                {r.evenements?.nom?.substring(0, 2).toUpperCase()}
+              </div>
+              <div className="flex-1">
+                <p className="text-white text-xs font-medium">{r.evenements?.nom}</p>
+                <p className="text-xs" style={{color: 'rgba(255,255,255,0.6)'}}>
+                  {r.evenements?.type} · {r.evenements?.date_evenement || 'Date non définie'}
+                </p>
+              </div>
+              <button onClick={() => updateStatut(r.id, 'confirme')}
+                className="text-xs px-2 py-1 rounded-lg"
+                style={{background: 'rgba(0,200,100,0.4)', color: 'white'}}>✓</button>
+              <button onClick={() => updateStatut(r.id, 'refuse')}
+                className="text-xs px-2 py-1 rounded-lg"
+                style={{background: 'rgba(255,50,50,0.3)', color: 'white'}}>✕</button>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* PROCHAINS RDV */}
+      <div className="rounded-2xl p-5" style={{background: 'rgba(255,255,255,0.15)'}}>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-medium text-white text-sm">📅 Prochains RDV</h2>
+          <button onClick={() => setOnglet('rdv')}
+            className="text-xs" style={{color: 'rgba(255,255,255,0.6)'}}>
+            Voir tout →
+          </button>
+        </div>
+        {reservations.length === 0 ? (
+          <p style={{color: 'rgba(255,255,255,0.6)', fontSize: '12px'}}>Aucun rendez-vous.</p>
+        ) : (
+          reservations.slice(0, 3).map(r => (
+            <div key={r.id} className="flex items-center gap-2 py-2"
+              style={{borderBottom: '1px solid rgba(255,255,255,0.1)'}}>
+              <div className="w-2 h-2 rounded-full flex-shrink-0"
+                style={{background: r.statut === 'confirme' ? '#00C864' : '#FFA500'}}></div>
+              <div className="flex-1">
+                <p className="text-white text-xs font-medium">{r.evenements?.nom}</p>
+                <p className="text-xs" style={{color: 'rgba(255,255,255,0.6)'}}>
+                  {r.evenements?.date_evenement || 'Date à confirmer'}
+                </p>
+              </div>
+              <span className="text-xs px-2 py-0.5 rounded-full"
+                style={{
+                  background: r.statut === 'confirme' ? 'rgba(0,200,100,0.3)' : 'rgba(255,165,0,0.3)',
+                  color: 'white'
+                }}>
+                {r.statut === 'confirme' ? 'Confirmé' : 'En attente'}
+              </span>
+            </div>
+          ))
+        )}
+      </div>
+
+    </div>
+
+    <div className="grid grid-cols-2 gap-4 mb-4">
+
+      {/* DISPONIBILITÉS */}
+      <div className="rounded-2xl p-5" style={{background: 'rgba(255,255,255,0.15)'}}>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-medium text-white text-sm">📆 Disponibilités</h2>
+          <button onClick={() => setOnglet('disponibilites')}
+            className="text-xs" style={{color: 'rgba(255,255,255,0.6)'}}>
+            Gérer →
+          </button>
+        </div>
+        <CalendrierPro reservations={reservations} />
+      </div>
+
+      {/* STATISTIQUES */}
+      <div className="rounded-2xl p-5" style={{background: 'rgba(255,255,255,0.15)'}}>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-medium text-white text-sm">📊 Statistiques du mois</h2>
+          <button onClick={() => setOnglet('stats')}
+            className="text-xs" style={{color: 'rgba(255,255,255,0.6)'}}>
+            Voir tout →
+          </button>
+        </div>
+        <p className="text-2xl font-bold text-white mb-1">
+          {reservations.filter(r => r.statut === 'confirme').length * 500} €
+        </p>
+        <p className="text-xs mb-3" style={{color: 'rgba(255,255,255,0.6)'}}>Chiffre d'affaires estimé</p>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { val: reservations.length, lbl: 'Réservations' },
+            { val: nbConfirmes, lbl: 'Confirmées' },
+            { val: presta.nb_avis || 0, lbl: 'Avis clients' },
+          ].map((s, i) => (
+            <div key={i} className="rounded-xl p-2 text-center"
+              style={{background: 'rgba(255,255,255,0.15)'}}>
+              <p className="text-lg font-semibold text-white">{s.val}</p>
+              <p className="text-xs" style={{color: 'rgba(255,255,255,0.6)'}}>{s.lbl}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+
+    <div className="grid grid-cols-2 gap-4">
+
+      {/* MON ABONNEMENT */}
+      <div className="rounded-2xl p-5" style={{background: 'rgba(255,255,255,0.15)'}}>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-medium text-white text-sm">💳 Mon abonnement</h2>
+          <button onClick={() => setOnglet('abonnement')}
+            className="text-xs" style={{color: 'rgba(255,255,255,0.6)'}}>
+            Changer →
+          </button>
+        </div>
+        <div className="rounded-xl p-3" style={{background: 'rgba(255,255,255,0.2)'}}>
+          <p className="text-white font-semibold">{planActuel.nom}</p>
+          <p className="text-white text-lg font-bold">{planActuel.prix}
+            <span className="text-xs font-normal" style={{color: 'rgba(255,255,255,0.7)'}}>{planActuel.periode}</span>
+          </p>
+          <p className="text-xs" style={{color: 'rgba(255,255,255,0.7)'}}>{planActuel.commission}</p>
+        </div>
+      </div>
+
+      {/* MES PHOTOS */}
+      <div className="rounded-2xl p-5" style={{background: 'rgba(255,255,255,0.15)'}}>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-medium text-white text-sm">📸 Mes photos</h2>
+          <button onClick={() => setOnglet('photos')}
+            className="text-xs" style={{color: 'rgba(255,255,255,0.6)'}}>
+            Gérer →
+          </button>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {[presta.photo_1, presta.photo_2, presta.photo_3].map((photo, i) => (
+            <div key={i} className="aspect-square rounded-xl overflow-hidden flex items-center justify-center"
+              style={{
+                background: photo ? 'transparent' : 'rgba(255,255,255,0.1)',
+                border: photo ? 'none' : '1px dashed rgba(255,255,255,0.3)'
+              }}>
+              {photo ? (
+                <img src={photo} alt={`photo ${i+1}`} className="w-full h-full object-cover" />
               ) : (
-                reservations.filter(r => r.statut === 'en_attente').map(r => (
-                  <div key={r.id} className="flex items-center gap-3 p-3 rounded-xl mb-2"
-                    style={{background: 'rgba(255,255,255,0.15)'}}>
-                    <div className="flex-1">
-                      <p className="text-white font-medium text-sm">{r.evenements?.nom}</p>
-                      <p className="text-xs" style={{color: 'rgba(255,255,255,0.7)'}}>
-                        {r.evenements?.type} · {r.evenements?.date_evenement || 'Date non définie'}
-                      </p>
-                    </div>
-                    <button onClick={() => updateStatut(r.id, 'confirme')}
-                      className="text-xs px-3 py-1.5 rounded-full font-medium"
-                      style={{background: 'rgba(0,255,150,0.4)', color: 'white'}}>✓ Accepter</button>
-                    <button onClick={() => updateStatut(r.id, 'refuse')}
-                      className="text-xs px-3 py-1.5 rounded-full font-medium"
-                      style={{background: 'rgba(255,50,50,0.3)', color: 'white'}}>✕ Refuser</button>
-                  </div>
-                ))
+                <span className="text-xl">📸</span>
               )}
             </div>
-          </div>
-        )}
+          ))}
+        </div>
+        <p className="text-xs mt-2" style={{color: 'rgba(255,255,255,0.6)'}}>
+          {[presta.photo_1, presta.photo_2, presta.photo_3].filter(Boolean).length}/3 photos
+        </p>
+      </div>
 
-        {onglet === 'rdv' && (
+    </div>
+  </div>
+)}
+   
   <div>
     {/* STATS */}
     <div className="grid grid-cols-3 gap-4 mb-6">
@@ -834,7 +978,6 @@ export default function EspacePro() {
       )}
     </div>
   </div>
-)}
 
         {onglet === 'reservations' && (
           <div className="rounded-2xl p-5" style={{background: 'rgba(255,255,255,0.15)'}}>
