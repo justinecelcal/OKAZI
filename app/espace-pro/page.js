@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import DisponibilitesOnglet from './DisponibilitesOnglet'
+import FormulasOnglet from './FormulasOnglet'
 
 const GRADIENT = 'linear-gradient(150deg, #FF6000 0%, #FF4500 30%, #FF1493 65%, #C2006B 100%)'
 
@@ -843,17 +844,9 @@ export default function EspacePro() {
 )}
 
         {/* MES FORMULES */}
-        {onglet === 'formules' && (
-          <div className="rounded-2xl p-5" style={{background: 'rgba(255,255,255,0.15)'}}>
-            <h2 className="font-medium text-white mb-4">Mes formules & tarifs</h2>
-            {['Essentiel', 'Prestige', 'Excellence'].map((f, i) => (
-              <div key={i} className="flex items-center gap-3 p-4 rounded-xl mb-2" style={{background: 'rgba(255,255,255,0.15)'}}>
-                <p className="text-white text-sm flex-1">{f}</p>
-                <button className="text-xs px-3 py-1 rounded-full" style={{background: 'white', color: '#FF1493'}}>Modifier</button>
-              </div>
-            ))}
-          </div>
-        )}
+       {onglet === 'formules' && (
+  <FormulasOnglet prestaId={presta.id} />
+)}
 
         {/* PHOTOS */}
         {onglet === 'photos' && (
