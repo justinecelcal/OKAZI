@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import DisponibilitesOnglet from './DisponibilitesOnglet'
 
 const GRADIENT = 'linear-gradient(150deg, #FF6000 0%, #FF4500 30%, #FF1493 65%, #C2006B 100%)'
 
@@ -837,12 +838,9 @@ export default function EspacePro() {
         )}
 
         {/* DISPONIBILITÉS */}
-        {onglet === 'disponibilites' && (
-          <div className="rounded-2xl p-5" style={{background: 'rgba(255,255,255,0.15)'}}>
-            <h2 className="font-medium text-white mb-4">Disponibilités</h2>
-            <p style={{color: 'rgba(255,255,255,0.6)'}}>Calendrier disponible prochainement.</p>
-          </div>
-        )}
+      {onglet === 'disponibilites' && (
+  <DisponibilitesOnglet prestaId={presta.id} reservations={reservations} />
+)}
 
         {/* MES FORMULES */}
         {onglet === 'formules' && (
