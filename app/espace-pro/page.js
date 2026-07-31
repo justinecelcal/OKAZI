@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import DisponibilitesOnglet from './DisponibilitesOnglet'
 import FormulasOnglet from './FormulasOnglet'
+import PhotosOnglet from './PhotosOnglet'
 
 const GRADIENT = 'linear-gradient(150deg, #FF6000 0%, #FF4500 30%, #FF1493 65%, #C2006B 100%)'
 
@@ -850,69 +851,7 @@ export default function EspacePro() {
 
         {/* PHOTOS */}
         {onglet === 'photos' && (
-          <div className="rounded-2xl p-5" style={{background: 'rgba(255,255,255,0.15)'}}>
-            <h2 className="font-medium text-white mb-4">Photos & Portfolio</h2>
-            <div className="mb-6">
-              <p className="text-sm font-medium text-white mb-3">Photo de profil / Logo</p>
-              <div className="flex items-center gap-4">
-                <div className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold overflow-hidden" style={{background: 'rgba(255,255,255,0.25)', color: 'white'}}>
-                  {presta.photo_profil ? <img src={presta.photo_profil} alt="profil" className="w-full h-full object-cover" /> : presta.nom?.substring(0, 2).toUpperCase()}
-                </div>
-                <div>
-                  <input type="file" accept="image/*" className="hidden" id="photo-profil"
-                    onChange={async (e) => {
-                      const file = e.target.files[0]
-                      if (!file) return
-                      const { error } = await supabase.storage.from('photos-prestataires').upload(`${presta.id}/profil/${file.name}`, file, { upsert: true })
-                      if (!error) {
-                        const { data: urlData } = supabase.storage.from('photos-prestataires').getPublicUrl(`${presta.id}/profil/${file.name}`)
-                        await supabase.from('prestataires').update({ photo_profil: urlData.publicUrl }).eq('id', presta.id)
-                        chargerDonnees()
-                      }
-                    }} />
-                  <label htmlFor="photo-profil" className="text-sm px-4 py-2 rounded-full font-semibold cursor-pointer" style={{background: 'white', color: '#FF1493'}}>
-                    📷 Changer la photo
-                  </label>
-                  <p className="text-xs mt-1" style={{color: 'rgba(255,255,255,0.6)'}}>JPG, PNG · Max 5MB</p>
-                </div>
-              </div>
-            </div>
-            <div className="mb-6">
-              <p className="text-sm font-medium text-white mb-3">Photos de présentation</p>
-              <div className="grid grid-cols-3 gap-3">
-                {[0, 1, 2].map(i => (
-                  <div key={i} className="relative">
-                    {presta[`photo_${i+1}`] ? (
-                      <div className="aspect-square rounded-xl overflow-hidden relative">
-                        <img src={presta[`photo_${i+1}`]} alt={`photo ${i+1}`} className="w-full h-full object-cover" />
-                        <button onClick={async () => {
-                          await supabase.from('prestataires').update({ [`photo_${i+1}`]: null }).eq('id', presta.id)
-                          chargerDonnees()
-                        }} className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs" style={{background: 'rgba(255,0,0,0.7)', color: 'white'}}>✕</button>
-                      </div>
-                    ) : (
-                      <label htmlFor={`photo-${i}`} className="aspect-square rounded-xl flex flex-col items-center justify-center cursor-pointer block"
-                        style={{background: 'rgba(255,255,255,0.15)', border: '2px dashed rgba(255,255,255,0.3)'}}>
-                        <span className="text-2xl mb-1">📸</span>
-                        <span className="text-xs" style={{color: 'rgba(255,255,255,0.6)'}}>Ajouter</span>
-                      </label>
-                    )}
-                    <input type="file" accept="image/*" className="hidden" id={`photo-${i}`}
-                      onChange={async (e) => {
-                        const file = e.target.files[0]
-                        if (!file) return
-                        const { error } = await supabase.storage.from('photos-prestataires').upload(`${presta.id}/photos/${i}_${file.name}`, file, { upsert: true })
-                        if (!error) {
-                          const { data: urlData } = supabase.storage.from('photos-prestataires').getPublicUrl(`${presta.id}/photos/${i}_${file.name}`)
-                          await supabase.from('prestataires').update({ [`photo_${i+1}`]: urlData.publicUrl }).eq('id', presta.id)
-                          chargerDonnees()
-                        }
-                      }} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <PhotosOnglet presta={presta} onRefresh={chargerDonnees} />
         )}
 
         {/* MESSAGERIE */}
