@@ -85,10 +85,14 @@ const modePro = searchParams.get('mode') === 'pro'
         <div className="bg-white rounded-2xl p-6 mb-4">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold text-white flex-shrink-0"
-                style={{background: GRADIENT}}>
-                {presta.nom?.substring(0, 2).toUpperCase()}
-              </div>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold text-white flex-shrink-0 overflow-hidden"
+  style={{background: GRADIENT}}>
+  {presta.photo_profil ? (
+    <img src={presta.photo_profil} alt={presta.nom} className="w-full h-full object-cover" />
+  ) : (
+    presta.nom?.substring(0, 2).toUpperCase()
+  )}
+</div>
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <h1 className="text-xl font-semibold" style={{color: '#1a1a1a'}}>{presta.nom}</h1>

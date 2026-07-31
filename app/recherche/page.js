@@ -246,10 +246,14 @@ function RechercheContent() {
                   style={{background: 'rgba(255,255,255,0.95)'}}>
 
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="rounded-full flex items-center justify-center font-semibold text-white flex-shrink-0"
-                      style={{width: '48px', height: '48px', background: GRADIENT, fontSize: '15px'}}>
-                      {getInitiales(p.nom)}
-                    </div>
+                    <div className="rounded-full flex items-center justify-center font-semibold text-white flex-shrink-0 overflow-hidden"
+  style={{width: '48px', height: '48px', background: GRADIENT, fontSize: '15px'}}>
+  {p.photo_profil ? (
+    <img src={p.photo_profil} alt={p.nom} className="w-full h-full object-cover" />
+  ) : (
+    getInitiales(p.nom)
+  )}
+</div>
                     <div className="flex-1">
                       <p className="font-semibold text-sm" style={{color: '#1a1a1a'}}>{p.nom}</p>
                       <p className="text-xs" style={{color: '#888'}}>{p.categorie} · {p.ville}</p>
