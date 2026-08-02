@@ -9,19 +9,38 @@ const GRADIENT = 'linear-gradient(150deg, #FF6000 0%, #FF4500 30%, #FF1493 65%, 
 
 export default function Navbar() {
   const [user, setUser] = useState(null)
+  const [estPrestataire, setEstPrestataire] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setUser(session?.user ?? null)
+      if (session?.user) {
+        const { data } = await supabase
+          .from('prestataires')
+          .select('id')
+          .eq('email', session.user.email)
+          .single()
+        setEstPrestataire(!!data)
+      }
     })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null)
+      if (session?.user) {
+        const { data } = await supabase
+          .from('prestataires')
+          .select('id')
+          .eq('email', session.user.email)
+          .single()
+        setEstPrestataire(!!data)
+      } else {
+        setEstPrestataire(false)
+      }
     })
     return () => subscription.unsubscribe()
   }, [])
 
-  async function seDeconnecter() {
+async function seDeconnecter() {
     await supabase.auth.signOut()
     router.push('/')
   }
@@ -62,11 +81,11 @@ export default function Navbar() {
   style={{background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)'}}>
   💬
 </Link>
-<Link href="/dashboard"
-              className="text-sm px-4 py-2 rounded-full font-semibold"
-              style={{background: GRADIENT, color: 'white'}}>
-              Mon espace
-            </Link>
+<Link href={estPrestataire ? '/espace-pro' : '/dashboard'}
+  className="text-sm px-4 py-2 rounded-full font-semibold"
+  style={{background: GRADIENT, color: 'white'}}>
+  {estPrestataire ? 'Mon espace pro' : 'Mon espace'}
+</Link>
             
             <button onClick={seDeconnecter}
               className="text-sm px-4 py-2 rounded-full font-semibold"
