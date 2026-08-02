@@ -6,6 +6,7 @@ import Link from 'next/link'
 import DisponibilitesOnglet from './DisponibilitesOnglet'
 import FormulasOnglet from './FormulasOnglet'
 import PhotosOnglet from './PhotosOnglet'
+import MessagerieOnglet from './MessagerieOnglet'
 
 const GRADIENT = 'linear-gradient(150deg, #FF6000 0%, #FF4500 30%, #FF1493 65%, #C2006B 100%)'
 
@@ -856,11 +857,8 @@ export default function EspacePro() {
 
         {/* MESSAGERIE */}
         {onglet === 'messagerie' && (
-          <div className="rounded-2xl p-5" style={{background: 'rgba(255,255,255,0.15)'}}>
-            <h2 className="font-medium text-white mb-4">Messagerie</h2>
-            <p style={{color: 'rgba(255,255,255,0.6)'}}>Messagerie disponible prochainement.</p>
-          </div>
-        )}
+  <MessagerieOnglet prestaId={presta.id} />
+)}
 
         {/* STATISTIQUES */}
         {onglet === 'stats' && (
